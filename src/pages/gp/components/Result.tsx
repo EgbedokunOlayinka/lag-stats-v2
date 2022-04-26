@@ -7,7 +7,7 @@ import {
 import CustomBtn from "../../../components/CustomBtn";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 import { gsap } from "gsap";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   gp: string;

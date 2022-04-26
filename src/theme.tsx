@@ -17,29 +17,29 @@ const colors = {
 const components = {
   Text: {
     baseStyle: {
-      fontFamily: "Plus Jakarta Sans",
+      fontFamily: "main",
       fontWeight: "400",
       fontSize: "1rem",
     },
   },
   Heading: {
     baseStyle: {
-      fontFamily: "Plus Jakarta Sans",
+      fontFamily: "main",
     },
   },
   Button: {
     baseStyle: {
-      fontFamily: "Plus Jakarta Sans",
+      fontFamily: "main",
     },
   },
   Input: {
     baseStyle: {
-      fontFamily: "Plus Jakarta Sans",
+      fontFamily: "main",
     },
   },
   Select: {
     baseStyle: {
-      fontFamily: "Plus Jakarta Sans",
+      fontFamily: "main",
     },
   },
 };
@@ -49,6 +49,13 @@ const theme = extendTheme({
   fonts,
   components,
   config,
+  styles: {
+    global: {
+      body: {
+        fontFamily: "main",
+      },
+    },
+  },
 });
 
 export default theme;
