@@ -42,85 +42,50 @@ const apiRoute = nextConnect({
 
 apiRoute.use(upload.single("file"));
 
+const parsePdf = (file): Promise<string[]> => {
+  return new Promise((resolve, reject) => {
+    const result = [];
+
+    new PdfReader().parseFileItems(file, function (err, item) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+
+      // add text to page array
+      if (item && item.text) {
+        result.push(item.text.toLowerCase());
+      }
+
+      if (!item) {
+        resolve(result);
+        console.log("--successfully parsed pdf: ", file);
+      }
+    });
+  });
+};
+
 apiRoute.post(async (req: FileRequest, res: NextApiResponse) => {
   const file = fs.readFileSync(req.file.path);
 
-  const studentData = {};
+  const studentData = {
+    name: "",
+    dept: "",
+    programme: "",
+    matricNum: "",
+    level: "",
+    currentCgpa: "",
+  };
 
   const arr = [];
 
-  // new PdfReader().parseFileItems(req.file.path, (err, item) => {
-  //   if (err) {
-  //     console.error("error:", err);
-  //   } else if (!item) {
-  //     console.warn("end of file");
-  //     return;
-  //   } else if (item.text) {
-  //     arr.push(item.text);
-  //   }
+  const pdfRes = await parsePdf(req.file.path);
+  // console.log(pdfRes);
 
-  //   console.log(arr);
-  // });
+  const nameIndex = pdfRes.findIndex((word) => word.includes("student name"));
+  const name = nameIndex > -1 ? pdfRes[nameIndex + 1] : "";
 
-  const test = await promFs.readFile(req.file.path);
-
-  let stuff;
-
-  const pdfParser = new pdfjson();
-
-  pdfParser.on("pdfParser_dataError", (errData) => console.error(errData.parserError));
-  pdfParser.on("pdfParser_dataReady", (pdfData) => {
-    // fs.writeFile("./pdf2json/test/F1040EZ.json", JSON.stringify(pdfData));
-    console.log(pdfData);
-  });
-
-  pdfParser.loadPDF(req.file.path);
-
-  // const filePromise = new Promise((resolve, reject) => {
-  //   new PdfReader().parseBuffer(test, (err, item) => {
-  //     if (err) reject();
-  //     else if (!item) console.warn("end of buffer");
-  //     else if (item.text) {
-  //       arr.push(item.text);
-  //       stuff = arr;
-  //       // console.log(stuff);
-  //     }
-  //   });
-
-  //   resolve(null);
-  //   console.log(stuff);
-  // });
-
-  // new PdfReader().parseBuffer(test, (err, item) => {
-  //   if (err) console.error("error:", err);
-  //   else if (!item) console.warn("end of buffer");
-  //   else if (item.text) arr.push(item.text);
-  // });
-
-  // filePromise
-  //   .then(() => {
-  //     res.status(200).json({ message: "yes", data: arr });
-  //   })
-  //   .catch(() => console.log("process ended"));
-
-  // pdf(file).then(function (data) {
-  //   // number of pages
-  //   console.log(data.numpages);
-  //   // number of rendered pages
-  //   console.log(data.numrender);
-  //   // PDF info
-  //   console.log(data.info);
-  //   // PDF metadata
-  //   console.log(data.metadata);
-  //   // PDF.js version
-  //   // check https://mozilla.github.io/pdf.js/getting_started/
-  //   console.log(data.version);
-  //   // PDF text
-  //   console.log(data.text);
-  //   stuff = data.text;
-  // });
-
-  res.json({ stuff });
+  res.json({ data: name });
 });
 
 export const config = {
