@@ -37,7 +37,7 @@ const CGPA: NextPage = () => {
     },
     {
       onSuccess: (data) => {
-        console.log(data);
+        data.json().then((res) => console.log(res));
       },
     }
   );
